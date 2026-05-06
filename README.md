@@ -25,7 +25,8 @@ dotnet add package Metalhead.BrowserCaptureRewrite.Playwright
 dotnet build
 ```
 
-Run the following command from your project directory to install Playwright and the supported browsers.  NOTE: If your project is not targeting .NET 8.0, replace `net8.0` in the path with your target framework:
+Run the following command from your project directory to install Playwright and the supported browsers:
+> NOTE: If your project is not targeting .NET 8.0, replace `net8.0` in the path with your target framework.
 ```bash
 pwsh bin/Debug/net8.0/playwright.ps1 install
 ```
@@ -75,7 +76,8 @@ See the [Extension methods section in the `BrowserCaptureRewrite.Abstractions` r
 See the [Convenience classes/interfaces section in the `BrowserCaptureRewrite.Abstractions` repository](https://github.com/metaljase/BrowserCaptureRewrite.Abstractions#convenience-classes--interfaces).
 
 ## Playwright specific methods
-Ultimately, the extension methods and convenience methods call through to `PlaywrightPageCaptureService` (for this implementation) to perform the actual work of navigating to the page URL, capturing the page's response HTML, rendered HTML, in-flight HTTP responses, and optionally rewriting in-flight HTTP responses.  It works directly with Playwright's `IPage`, so it can be used for more custom scenarios where you need direct access to the `IPage` or want to use Playwright features that aren't abstracted by the other methods.  However, unlike the extension methods and convenience methods, [`PageCaptureIncompleteException`](https://github.com/metaljase/BrowserCaptureRewrite.Abstractions/blob/master/Metalhead.BrowserCaptureRewrite.Abstractions/Exceptions/PageCaptureIncompleteException.cs) is not thrown when capture does not complete successfully; therefore, it's recommended `PlaywrightPageCaptureService` is only used when the other capture methods aren't sufficient.
+Ultimately, the extension methods and convenience methods call through to `PlaywrightPageCaptureService` (for this implementation) to perform the actual work of navigating to the page URL, capturing the page's response HTML, rendered HTML, in-flight HTTP responses, and optionally rewriting in-flight HTTP responses.  It works directly with Playwright's `IPage`, so it can be used for more custom scenarios where you need direct access to the `IPage` or want to use Playwright features that aren't abstracted by the other methods.
+> NOTE: Unlike the extension methods and convenience methods, [`PageCaptureIncompleteException`](https://github.com/metaljase/BrowserCaptureRewrite.Abstractions/blob/master/Metalhead.BrowserCaptureRewrite.Abstractions/Exceptions/PageCaptureIncompleteException.cs) is not thrown when capture does not complete successfully; therefore, it's recommended `PlaywrightPageCaptureService` is only used when the other capture methods aren't sufficient.
 
 XML documentation for [`IPlaywrightPageCaptureService`](https://github.com/metaljase/BrowserCaptureRewrite.Playwright/blob/master/Metalhead.BrowserCaptureRewrite.Playwright/Services/IPlaywrightPageCaptureService.cs) is available in the source code.
 
