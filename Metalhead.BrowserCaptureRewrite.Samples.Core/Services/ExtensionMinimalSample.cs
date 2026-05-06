@@ -30,7 +30,7 @@ public class ExtensionMinimalSample(
         // that's fetched after a 3 seconds delay.  The extension method creates a CaptureSpec
         // with a capture-completion predicate that only completes once all 3 URLs have been captured.
         IReadOnlyList<CapturedResource> resultByUrls =
-            await captureService.NavigateAndCaptureResourcesAsync(
+            await captureService.NavigateAndCaptureResourcesByUrlAsync(
                 resilientSession,
                 pageUrl,
                 urlsToCapture,
@@ -57,7 +57,7 @@ public class ExtensionMinimalSample(
         // control when capture should complete, e.g. after specific URLs have been captured, or a
         // duration of time has elapsed, or when the file contains certain data.
         IReadOnlyList<CapturedResource> resultByFileExt =
-            await captureService.NavigateAndCaptureResourcesAsync(
+            await captureService.NavigateAndCaptureResourcesByFileExtensionAsync(
                 resilientSession,
                 pageUrl,
                 [".json"],
