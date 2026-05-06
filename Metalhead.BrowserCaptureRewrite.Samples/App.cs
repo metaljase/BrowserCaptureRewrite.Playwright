@@ -102,25 +102,27 @@ internal sealed class App(
         {
             Console.WriteLine();
             Console.WriteLine("Capture and display bands & albums JSON by...");
+            Console.WriteLine("* = Without a capture-completion predicate, so will not wait for albums to be fetched.");
             Console.WriteLine();
 
-            Console.WriteLine("a) Rendered HTML only; cannot provide capture-completion predicate, so will not wait for albums to be fetched.");
-            Console.WriteLine("b) File extension (.json).");
-            Console.WriteLine("c) File extension (.json), and rewrites albums JSON response by adding more albums.");
-            Console.WriteLine("d) Deserializing JSON files.");
-            Console.WriteLine("e) Deserializing JSON files, and rewrites albums JSON response by adding more albums.");
-            Console.WriteLine("f) URLs of JSON files.");
-            Console.WriteLine("g) URLs of JSON files using an extension method (simplest).");
-            Console.WriteLine("h) URLs of JSON files, and rewrites albums JSON response by adding more albums.");
-            Console.WriteLine("i) URLs of JSON files, and rewrites albums JSON response by adding more albums, capturing rendered HTML as well.");
-            Console.WriteLine("j) URL of albums JSON file, and rewrites HTML to prevent bands JSON from being fetched, capturing rendered HTML as well.");
-            Console.WriteLine("k) URLs of JSON files with a sign-in step (capture starts when browser navigates away from sign-in URL).");
-            Console.WriteLine("l) URLs of JSON files with a sign-in step (capture starts when browser navigates to 'signed-in URL').");
-            Console.WriteLine("m) URLs of JSON files with a sign-in step (capture starts after 'assume signed-in after' duration (8 secs).");
-            Console.WriteLine("n) URLs of JSON files without a capture-completion predicate (will not wait for albums to be fetched).");
-            Console.WriteLine("o) URLs of JSON files with an incorrect URL (capture-completion predicate cannot complete), causing a timeout after 20 secs.");
-            Console.WriteLine("p) URLs of JSON files with an incorrect URL (capture-completion predicate cannot complete), calling directly (not a convenience method), returns whatever captured instead of throwing a PageCaptureIncompleteException after 20 secs.");
-            Console.WriteLine("q) Rendered HTML only, using PlaywrightPageCaptureService without a capture-completion predicate.");
+            Console.WriteLine("a) Rendered HTML only. *");
+            Console.WriteLine("b) Content-Type (application/json) using an extension method (simplest). *");
+            Console.WriteLine("c) File extension (.json).");
+            Console.WriteLine("d) File extension (.json), and rewrites albums JSON response by adding more albums.");
+            Console.WriteLine("e) Deserializing JSON files.");
+            Console.WriteLine("f) Deserializing JSON files, and rewrites albums JSON response by adding more albums.");
+            Console.WriteLine("g) URLs of JSON files.");
+            Console.WriteLine("h) URLs of JSON files. *");
+            Console.WriteLine("i) URLs of JSON files using an extension method (simplest).");
+            Console.WriteLine("j) URLs of JSON files, and rewrites albums JSON response by adding more albums.");
+            Console.WriteLine("k) URLs of JSON files, and rewrites albums JSON response by adding more albums, capturing rendered HTML as well.");
+            Console.WriteLine("l) URL of albums JSON file, and rewrites HTML to prevent bands JSON from being fetched, capturing rendered HTML as well.");
+            Console.WriteLine("m) URLs of JSON files with a sign-in step (capture starts when browser navigates away from sign-in URL).");
+            Console.WriteLine("n) URLs of JSON files with a sign-in step (capture starts when browser navigates to 'signed-in URL').");
+            Console.WriteLine("o) URLs of JSON files with a sign-in step (capture starts after 'assume signed-in after' duration (4 secs).");
+            Console.WriteLine("p) URLs of JSON files with an incorrect URL (capture-completion cannot complete), causing a timeout after 20 secs.");
+            Console.WriteLine("q) URLs of JSON files with an incorrect URL (capture-completion cannot complete), calling directly (not a convenience method), returns whatever captured instead of throwing a PageCaptureIncompleteException after 20 secs.");
+            Console.WriteLine("r) Rendered HTML only, using PlaywrightPageCaptureService. *");
             Console.WriteLine("X) Exit");
             Console.WriteLine();
             Console.WriteLine("Choose an option...");
@@ -148,70 +150,74 @@ internal sealed class App(
                         await CaptureAndDisplayRenderedHtmlAsync(cancellationToken).ConfigureAwait(false);
                         break;
                     case 'b':
-                        await CaptureAndDisplayBandsAndAlbumsByFileExtensionsAsync(null, cancellationToken)
+                        await CaptureAndDisplayBandsAndAlbumsByContentTypeExtensionAsync(null, cancellationToken)
                             .ConfigureAwait(false);
                         break;
                     case 'c':
-                        await CaptureAndDisplayBandsAndAlbumsByFileExtensionsWithRewriteAddingAlbumsAsync(cts.Token)
+                        await CaptureAndDisplayBandsAndAlbumsByFileExtensionsAsync(null, cancellationToken)
                             .ConfigureAwait(false);
                         break;
                     case 'd':
-                        await CaptureAndDisplayBandsAndAlbumsByDeserializationAsync(cts.Token).ConfigureAwait(false);
+                        await CaptureAndDisplayBandsAndAlbumsByFileExtensionsWithRewriteAddingAlbumsAsync(cts.Token)
+                            .ConfigureAwait(false);
                         break;
                     case 'e':
+                        await CaptureAndDisplayBandsAndAlbumsByDeserializationAsync(cts.Token).ConfigureAwait(false);
+                        break;
+                    case 'f':
                         await CaptureAndDisplayBandsAndAlbumsByDeserializationWithRewriteAddingAlbumsAsync(cts.Token)
                             .ConfigureAwait(false);
                         break;
-                    case 'f':
+                    case 'g':
                         await CaptureAndDisplayBandsAndAlbumsByUrlsAsync(cts.Token).ConfigureAwait(false);
                         break;
-                    case 'g':
+                    case 'h':
+                        await CaptureAndDisplayBandsAndAlbumsByUrlsWithoutCompletionAsync(cts.Token).ConfigureAwait(false);
+                        break;
+                    case 'i':
                         await CaptureAndDisplayBandsAndAlbumsByUrlsExtensionAsync(null, cancellationToken)
                             .ConfigureAwait(false);
                         break;
-                    case 'h':
+                    case 'j':
                         await CaptureAndDisplayBandsAndAlbumsByUrlsWithRewriteAddingAlbumsAsync(cts.Token)
                             .ConfigureAwait(false);
                         break;
-                    case 'i':
+                    case 'k':
                         await CaptureAndDisplayBandsAndAlbumsAndHtmlByUrlsWithRewriteAddingAlbumsAsync(cts.Token)
                             .ConfigureAwait(false);
                         break;
-                    case 'j':
+                    case 'l':
                         await CaptureAndDisplayAlbumsAndHtmlByUrlsWithRewriteToNotFetchBandsAsync(cts.Token)
                             .ConfigureAwait(false);
                         break;
-                    case 'k':
+                    case 'm':
                         await CaptureAndDisplayBandsAndAlbumsByUrlsWithSignInUrlAndWithoutSignedInUrlAsync(cts.Token)
                             .ConfigureAwait(false);
                         break;
-                    case 'l':
+                    case 'n':
                         await CaptureAndDisplayBandsAndAlbumsByUrlsWithSignInUrlAndSignedInUrlAsync(cts.Token)
                             .ConfigureAwait(false);
                         break;
-                    case 'm':
+                    case 'o':
                         await CaptureAndDisplayBandsAndAlbumsByUrlsWithSignInUrlAndSignedInDelayAsync(cts.Token)
                             .ConfigureAwait(false);
                         break;
-                    case 'n':
-                        await CaptureAndDisplayBandsAndAlbumsByUrlsWithoutCompletionAsync(cts.Token).ConfigureAwait(false);
-                        break;
-                    case 'o':
+                    case 'p':
                         await CaptureAndDisplayBandsAndAlbumsByUrlsWithWrongUrlThrowsTimeoutAsync(cts.Token)
                             .ConfigureAwait(false);
                         break;
-                    case 'p':
+                    case 'q':
                         await CaptureAndDisplayBandsAndAlbumsAndHtmlDirectlyByCaptureSpecAsync(null, cancellationToken)
                             .ConfigureAwait(false);
                         break;
-                    case 'q':
+                    case 'r':
                         await FetchAndDisplayRenderedHtmlWithPlaywrightAsync(cts.Token).ConfigureAwait(false);
                         break;
-                    case 'r':
+                    case 's':
                         // Minimal extension method sample from README.md
                         await extensionMinimalSample.CaptureResponsesAsync(cts.Token).ConfigureAwait(false);
                         break;
-                    case 's':
+                    case 't':
                         // Minimal convenience method sample from README.md
                         await convenienceMinimalSample.CaptureResponsesAndRenderedHtmlAsync(cts.Token).ConfigureAwait(false);
                         break;
@@ -284,7 +290,7 @@ internal sealed class App(
 
     private async Task CaptureAndDisplayBandsAndAlbumsByUrlsWithSignInUrlAndSignedInDelayAsync(CancellationToken cancellationToken)
     {
-        SignInOptions signInOptionsWithDelay = new(assumeSignedInAfter: TimeSpan.FromSeconds(8));
+        SignInOptions signInOptionsWithDelay = new(assumeSignedInAfter: TimeSpan.FromSeconds(4));
         var captureSpec = captureSpecFactoryByUrls.CreateSpecForBandsAndAlbumsByUrl(UrlsToCapture);
         await CaptureAndDisplayBandsAndAlbumsByCaptureSpecAsync(
             captureSpec, null, signInOptionsWithDelay, cancellationToken, SignInUrl)
@@ -393,6 +399,47 @@ internal sealed class App(
                 captureTimingOptions,
                 rewriteSpec,
                 UrlsToCapture,
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (
+            ex is BrowserSessionInitializationException
+            or PageCaptureIncompleteException
+            or SignInException
+            or ConnectivityException
+            or HttpRequestException
+            or TimeoutException
+            or InvalidOperationException
+            or ArgumentException
+            or ArgumentNullException
+            || (ex is TaskCanceledException && !cancellationToken.IsCancellationRequested))
+        {
+            return;
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogCritical(ex, "Fatal error capturing files.  Exiting.");
+            throw;
+        }
+
+        DisplayBandsAndAlbums(capturedResources.Bands, capturedResources.Albums);
+    }
+
+    private async Task CaptureAndDisplayBandsAndAlbumsByContentTypeExtensionAsync(
+        RewriteSpec? rewriteSpec, CancellationToken cancellationToken)
+    {
+        (Bands Bands, Albums Albums) capturedResources;
+        try
+        {
+            capturedResources = await resourceCaptureService.CaptureBandsAndAlbumsAsync(
+                SampleUrl,
+                null,
+                null,
+                null,
+                signInOptions,
+                navigationTimingOptions,
+                captureTimingOptions,
+                rewriteSpec,
+                ["application/json"],
                 cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex) when (

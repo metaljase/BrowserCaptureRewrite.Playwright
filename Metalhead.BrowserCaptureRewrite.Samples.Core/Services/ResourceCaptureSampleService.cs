@@ -89,7 +89,7 @@ public sealed class ResourceCaptureSampleService(
             signInOptions,
             navigationTimingOptions,
             captureAsync: (session, navigationOptions, ct) =>
-                captureService.NavigateAndCaptureResourcesResultAsync(
+                captureService.NavigateAndCaptureResourcesByFileExtensionResultAsync(
                     session, navigationOptions, extensions, ct, rewriteSpec, shouldCompleteCapture, captureTimingOptions),
             cancellationToken)
             .ConfigureAwait(false);
@@ -122,10 +122,54 @@ public sealed class ResourceCaptureSampleService(
             captureAsync: async (session, navigationOptions, ct) =>
             {
                 // Extension method.
-                var result = await captureService.NavigateAndCaptureResourcesAsync(
+                var result = await captureService.NavigateAndCaptureResourcesByUrlAsync(
                     session,
                     url,
                     urlsToCapture,
+                    ct,
+                    referrerUrl,
+                    navigationTimingOptions.PageLoadTimeout(),
+                    captureTimingOptions.NetworkIdleTimeout(),
+                    captureTimingOptions.CaptureTimeout(),
+                    captureTimingOptions.PollInterval(),
+                    rewriteSpec)
+                .ConfigureAwait(false);
+                return new PageCaptureResult(null, null, result, null, null);
+            },
+            cancellationToken).ConfigureAwait(false);
+
+        return (result.Bands, result.Albums);
+    }
+
+    /// <inheritdoc/>
+    public async Task<(Bands Bands, Albums Albums)> CaptureBandsAndAlbumsAsync(
+        Uri url,
+        Uri? referrerUrl,
+        Uri? signInUrl,
+        Uri? assumeSignedInWhenNavigatedToUrl,
+        SignInOptions signInOptions,
+        NavigationTimingOptions navigationTimingOptions,
+        CaptureTimingOptions captureTimingOptions,
+        RewriteSpec? rewriteSpec,
+        string[] contentTypes,
+        CancellationToken cancellationToken)
+    {
+        var orchestrator = new CaptureOrchestrator(logger, browserSessionService, resilienceWrapper, classifier, probe);
+
+        var result = await orchestrator.CaptureBandsAndAlbumsAsync(
+            url,
+            referrerUrl,
+            signInUrl,
+            assumeSignedInWhenNavigatedToUrl,
+            signInOptions,
+            navigationTimingOptions,
+            captureAsync: async (session, navigationOptions, ct) =>
+            {
+                // Extension method.
+                var result = await captureService.NavigateAndCaptureResourcesByContentTypeAsync(
+                    session,
+                    url,
+                    contentTypes,
                     ct,
                     referrerUrl,
                     navigationTimingOptions.PageLoadTimeout(),
