@@ -5,9 +5,10 @@ Because intercepting and modifying HTTP responses happens in-flight before they 
 
 Optionally, resiliency features such as retry logic and timeout handling can be configured, and the ability to manually sign-in is supported, for when the target web page requires authentication.
 
-A key part for capturing in-flight HTTP responses is creating a `CaptureSpec` instance, which specifies what HTTP responses should be captured.  Similarly, rewriting in-flight HTTP responses relies on a `RewriteSpec` instance, which specifies which responses should be rewritten and how.
+> [!NOTE]
+> A key part for capturing in-flight HTTP responses is creating a `CaptureSpec` instance, which specifies what HTTP responses should be captured.  Similarly, rewriting in-flight HTTP responses relies on a `RewriteSpec` instance, which specifies which responses should be rewritten and how.
 
-With a browser instance, an overload of `NavigateAndCaptureResultAsync` in `PlaywrightPageCaptureService` can be called to perform the navigation, capture, and optional rewrite, by providing a `CaptureSpec` and optionally a `RewriteSpec` instance.  However, it's usually more convenient to call an overload in one of the [convenience classes or extension methods](#capturerewrite-methods) instead.
+With a browser instance, an overload of `NavigateAndCaptureResultAsync` in [`PlaywrightPageCaptureService`](https://github.com/metaljase/BrowserCaptureRewrite.Playwright/blob/master/Metalhead.BrowserCaptureRewrite.Playwright/Services/PlaywrightPageCaptureService.cs) can be called to perform the navigation, capture, and optional rewrite, by providing a `CaptureSpec` and optionally a `RewriteSpec` instance.  However, it's usually more convenient to call an overload in one of the [convenience classes or extension methods](#capturerewrite-methods) instead.
 
 # BrowserCaptureRewrite.Samples
 `BrowserCaptureRewrite.Samples` is a .NET console application that uses the sample code in `BrowserCaptureRewrite.Samples.Core` to demonstrate how `BrowserCaptureRewrite.Abstractions` and `BrowserCaptureRewrite.Playwright` can capture or rewrite in-flight HTTP responses from web page URLs.
@@ -26,7 +27,8 @@ dotnet build
 ```
 
 Run the following command from your project directory to install Playwright and the supported browsers:
-> NOTE: If your project is not targeting .NET 8.0, replace `net8.0` in the path with your target framework.
+> [!WARNING]
+> If your project is not targeting .NET 8.0, replace `net8.0` in the path with your target framework.
 ```bash
 pwsh bin/Debug/net8.0/playwright.ps1 install
 ```
@@ -65,7 +67,7 @@ builder.Services.AddPlaywrightCaptureRewrite(b =>
 # Examples
 See the [Examples section in the `BrowserCaptureRewrite.Abstractions` repository](https://github.com/metaljase/BrowserCaptureRewrite.Abstractions#examples) for code demonstrating how to capture and rewrite in-flight HTTP responses.
 
-# Capture/Rewrite methods
+# Capture & Rewrite methods
 ## Return types
 See the [Return types section in the `BrowserCaptureRewrite.Abstractions` repository](https://github.com/metaljase/BrowserCaptureRewrite.Abstractions#return-types).
 
@@ -76,8 +78,10 @@ See the [Extension methods section in the `BrowserCaptureRewrite.Abstractions` r
 See the [Convenience classes/interfaces section in the `BrowserCaptureRewrite.Abstractions` repository](https://github.com/metaljase/BrowserCaptureRewrite.Abstractions#convenience-classes--interfaces).
 
 ## Playwright specific methods
-Ultimately, the extension methods and convenience methods call through to `PlaywrightPageCaptureService` (for this implementation) to perform the actual work of navigating to the page URL, capturing the page's response HTML, rendered HTML, in-flight HTTP responses, and optionally rewriting in-flight HTTP responses.  It works directly with Playwright's `IPage`, so it can be used for more custom scenarios where you need direct access to the `IPage` or want to use Playwright features that aren't abstracted by the other methods.
-> NOTE: Unlike the extension methods and convenience methods, [`PageCaptureIncompleteException`](https://github.com/metaljase/BrowserCaptureRewrite.Abstractions/blob/master/Metalhead.BrowserCaptureRewrite.Abstractions/Exceptions/PageCaptureIncompleteException.cs) is not thrown when capture does not complete successfully; therefore, it's recommended `PlaywrightPageCaptureService` is only used when the other capture methods aren't sufficient.
+Ultimately, the extension methods and convenience methods call through to [`PlaywrightPageCaptureService`](https://github.com/metaljase/BrowserCaptureRewrite.Playwright/blob/master/Metalhead.BrowserCaptureRewrite.Playwright/Services/PlaywrightPageCaptureService.cs) (for this implementation) to perform the actual work of navigating to the page URL, capturing the page's response HTML, rendered HTML, in-flight HTTP responses, and optionally rewriting in-flight HTTP responses.  It works directly with Playwright's `IPage`, so it can be used for more custom scenarios where you need direct access to the `IPage` or want to use Playwright features that aren't abstracted by the other methods.
+
+> [!WARNING]
+> Unlike the extension methods and convenience methods, [`PageCaptureIncompleteException`](https://github.com/metaljase/BrowserCaptureRewrite.Abstractions/blob/master/Metalhead.BrowserCaptureRewrite.Abstractions/Exceptions/PageCaptureIncompleteException.cs) is not thrown when capture does not complete successfully; therefore, it's recommended `PlaywrightPageCaptureService` is only used when the other capture methods aren't sufficient.
 
 XML documentation for [`IPlaywrightPageCaptureService`](https://github.com/metaljase/BrowserCaptureRewrite.Playwright/blob/master/Metalhead.BrowserCaptureRewrite.Playwright/Services/IPlaywrightPageCaptureService.cs) is available in the source code.
 
@@ -101,3 +105,6 @@ Task<PageCaptureResult> NavigateAndCaptureResultAsync(
     CaptureTimingOptions timingOptions,
     CancellationToken cancellationToken);
 ```
+
+# Capture & Rewrite specifications
+See the [Capture & Rewrite specifications section in the `BrowserCaptureRewrite.Abstractions` repository](https://github.com/metaljase/BrowserCaptureRewrite.Abstractions#capture--rewrite-specifications) for details on `CaptureSpec` and `RewriteSpec`, which are used to specify what HTTP responses should be captured and rewritten.
